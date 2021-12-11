@@ -7,19 +7,19 @@ import {
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-import { updateUsersCurrentLocation } from '../../config/firebase';
+import { updateUsersCurrentLocation,getAllRequestedTrips } from '../../config/firebase';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateCurrentLocation } from '../../store/actions/locationActions';
-
 
 function Dashboard({ navigation }) {
 
   const dispatch = useDispatch()
 
-  const uid = useSelector(state => state.userReducer.user.uid)
-  console.log("Dashboard uid: ", uid)
+  const driverData = useSelector(state => state.userReducer.user)
+  console.log("Dashboard uid: ", driverData.uid)
   const [location, setLocation] = useState();
+  const [requestedTrips, setRequestedTrips] = useState();
 
   useEffect(() => {
     (async () => {
@@ -34,17 +34,19 @@ function Dashboard({ navigation }) {
         distanceInterval: 1
       }
       Location.watchPositionAsync(options, (location) => {
-        // console.log(location)
+        console.log(location)
         setLocation(location.coords)
         dispatch(updateCurrentLocation(location.coords))
-
-        updateUsersCurrentLocation(uid, location)
+        updateUsersCurrentLocation(driverData.uid, location)
       })
-
     })();
+    const myRequestedTrips = getAllRequestedTrips(driverData)
+    setRequestedTrips(myRequestedTrips)
   }, []);
 
-
+  if(requestedTrips){
+    alert("you have been requested a trip would you like to accet it or reject it")
+  }
 
   let initialLongitude, initialLatitude
 
@@ -57,10 +59,7 @@ function Dashboard({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 
-
-
-
-      <MapView
+      {/* <MapView
         region={{
           latitude: initialLatitude || 24.9331712,
           longitude: initialLongitude || 67.0892032,
@@ -77,11 +76,7 @@ function Dashboard({ navigation }) {
           title={'Your Here'}
         />
 
-      </ MapView>
-
-
-
-
+      </ MapView> */}
 
     </View>
   );

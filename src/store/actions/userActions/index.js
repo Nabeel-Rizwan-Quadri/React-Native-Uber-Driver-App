@@ -5,6 +5,8 @@ function updateUser(user){
     }
 }
 
+
+
 function deleteUser(user){
     return {
         type: "DELETE_USER",

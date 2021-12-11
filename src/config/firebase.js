@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "firebase/auth"
-import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { addDoc, collection, setDoc, doc, getFirestore ,getDocs, query, where } from "firebase/firestore"
 import { useDispatch, useSelector } from "react-redux";
 import { deleteUser } from '../store/actions/userActions';
 
@@ -48,13 +48,46 @@ async function logout() {
 }
 
 async function updateUsersCurrentLocation(uid, location) {
+  console.log("firebase callled")
   const locationRef = doc(db, 'drivers', uid)
-  await updateDoc(locationRef, {location: location.coords} )
+  await updateDoc(locationRef, { location: location.coords })
+}
+
+async function getAllRequestedTrips(driverData) {
+  let dataCopyArray = []
+
+  // const q = query(collection(db, "requestedTrip"))
+
+  // const querySnapshot = await getDocs(q, where("driver.id", "==", driverData.id));
+  // querySnapshot.forEach((doc) => {
+  //   let dataCopy = doc.data()
+  //   dataCopyArray.push({ ...dataCopy, id: doc.id })
+  // });
+
+  const q = query(collection(db, "requestedTrip"), where("driver.id", "==", driverData.id));
+
+  const result = onSnapshot(q, (querySnapshot) => {
+    const requestedTrip = [];
+
+    querySnapshot.forEach((doc) => {
+      requestedTrip.push(doc.data());
+      dataCopyArray.push(doc.data())
+    });
+
+    console.log("requestedTrips are: ", requestedTrip);
+    return requestedTrip
+  });
+
+  dataCopyArray.push(result)
+  console.log("dataCopyArray: ", dataCopyArray);
+
+  return dataCopyArray
 }
 
 export {
   registerUser,
   loginUser,
   logout,
-  updateUsersCurrentLocation
+  updateUsersCurrentLocation,
+  getAllRequestedTrips
 }

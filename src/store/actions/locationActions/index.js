@@ -19,6 +19,13 @@ function updateDestinationLocation(destinationLocation) {
   }
 }
 
+// function updateDestinationLocation(destinationLocation) {
+//   return {
+//     type: "UPDATE_DESTINATION_LOCATION",
+//     data: destinationLocation
+//   }
+// }
+
 export {
   updateCurrentLocation,
   updatePickupLocation,
